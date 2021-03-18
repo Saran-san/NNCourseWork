@@ -85,7 +85,7 @@ class TrainDqn:
                     action = np.random.randint(0, self.action_dim)
                 else:
                     # Take action that maximizes the total reward
-                    action = np.argmax(agent.model.predict(np.expand_dims(cur_state, axis=0))[0])
+                    action = np.argmax(self.agent.model.predict(np.expand_dims(cur_state, axis=0))[0])
 
                 next_state, reward, done, _ = self.env.step(action)
 
@@ -96,7 +96,7 @@ class TrainDqn:
                     reward = 250 + episode_reward
                     # save the model if we are getting maximum score this time
                     if(episode_reward > max_reward):
-                        agent.model.save_weights(str(episode_reward)+"_agent_.h5")
+                        self.agent.model.save_weights(str(episode_reward)+"_agent_.h5")
                 else:
                     # In oher cases reward will be proportional to the distance that car has travelled 
                     # from it's previous location + velocity of the car
