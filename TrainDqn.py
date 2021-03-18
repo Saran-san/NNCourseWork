@@ -27,8 +27,8 @@ class TrainDqn:
 
         # Environment details
         self.env = gym.make(self.gameEnv)
-        self.action_dim = self.env.action_space.n
-        self.observation_dim = self.env.observation_space.shape
+        self.actionDimension = self.env.action_space.n
+        self.observationDimension = self.env.observation_space.shape
 
         # creating own session to use across all the Keras/Tensorflow models we are using
         self.sess = tf.compat.v1.Session()
@@ -37,7 +37,7 @@ class TrainDqn:
         self.replay_memory = deque(maxlen=self.ReplayMemoryQueueSize)
 
         # Our models to solve the mountaincar problem.
-        self.agent = DQNAgent(self.sess, self.action_dim, self.observation_dim)
+        self.agent = DQNAgent(self.sess, self.actionDimension, self.observationDimension)
 
 
     def train_dqn_agent(self):
@@ -45,19 +45,19 @@ class TrainDqn:
         currStates = []
         nextStates = []
         for index, sample in enumerate(minibatch):
-            cur_state, action, reward, nextState, done = sample
-            currStates.append(cur_state)
+            currState, action, reward, nextState, done = sample
+            currStates.append(currState)
             nextStates.append(nextState)
     
         currStates = np.array(currStates)
         nextStates = np.array(nextStates)
     
-        # action values for the current_states
+        # action values for the currStates
         currActionValues = self.agent.model.predict(currStates)
-        # action values for the next_states taken from our agent (Q network)
+        # action values for the nextStates taken from our agent (Q network)
         nextActionValues = self.agent.model.predict(nextStates)
         for index, sample in enumerate(minibatch):
-            cur_state, action, reward, nextState, done = sample
+            currState, action, reward, nextState, done = sample
             if not done:
                 # Q(st, at) = rt + discount * max(Q(s(t+1), a(t+1)))
                 currActionValues[index][action] = reward + self.discount * np.amax(nextActionValues[index])
@@ -68,43 +68,43 @@ class TrainDqn:
         self.agent.model.fit(currStates, currActionValues, verbose=0)
 
     def StartPlaying(self):
-        max_reward = -999999
+        max_reward = -1000
         for episode in range(self.noOfEpisodes):
-            cur_state = self.env.reset()
+            currState = self.env.reset()
             done = False
-            episode_reward = 0
-            episode_length = 0
+            episodeReward = 0
+            episodeLength = 0
             while not done:
-                episode_length += 1
+                episodeLength += 1
                 # set doRender = True if want to see agent while training. But makes training a bit slower.
                 if self.doRender:
                     self.env.render()
 
                 if(np.random.uniform(0, 1) < self.epsilon):
                     # Take random action
-                    action = np.random.randint(0, self.action_dim)
+                    action = np.random.randint(0, self.actionDimension)
                 else:
                     # Take action that maximizes the total reward
-                    action = np.argmax(self.agent.model.predict(np.expand_dims(cur_state, axis=0))[0])
+                    action = np.argmax(self.agent.model.predict(np.expand_dims(currState, axis=0))[0])
 
                 nextState, reward, done, _ = self.env.step(action)
 
-                episode_reward += reward
+                episodeReward += reward
 
-                if done and episode_length < 200:
+                if done and episodeLength < 200:
                     # If episode is ended the we have won the game. So, give some large positive reward
-                    reward = 250 + episode_reward
+                    reward = 250 + episodeReward
                     # save the model if we are getting maximum score this time
-                    if(episode_reward > max_reward):
-                        self.agent.model.save_weights(str(episode_reward)+"_agent_.h5")
+                    if(episodeReward > max_reward):
+                        self.agent.model.save_weights(str(episodeReward)+"_agent_.h5")
                 else:
                     # In other cases reward will be proportional to the distance that car has travelled 
                     # from it's previous location + velocity of the car
-                    reward = 5*abs(nextState[0] - cur_state[0]) + 3*abs(cur_state[1])
+                    reward = 5*abs(nextState[0] - currState[0]) + 3*abs(currState[1])
             
                 # Add experience to replay memory buffer
-                self.replay_memory.append((cur_state, action, reward, nextState, done))
-                cur_state = nextState
+                self.replay_memory.append((currState, action, reward, nextState, done))
+                currState = nextState
         
                 if(len(self.replay_memory) < self.minReplayMemoryQueueSize):
                     continue
@@ -116,8 +116,8 @@ class TrainDqn:
                 self.epsilon *= self.epsilonDecay
 
             # some bookkeeping.
-            max_reward = max(episode_reward, max_reward)
-            print('Episode', episode, 'Episodic Reward', episode_reward, 'Maximum Reward', max_reward, 'epsilon', self.epsilon)
+            max_reward = max(episodeReward, max_reward)
+            print('Episode', episode, 'Episodic Reward', episodeReward, 'Maximum Reward', max_reward, 'epsilon', self.epsilon)
 
 obj = TrainDqn()
 obj.StartPlaying()
