@@ -5,7 +5,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.optimizers import Adam
 
 # setting seeds for result reproducibility. This is not super important
-#tf.v1.random.set_random_seed(2212)
+tf.compat.v1.random.set_random_seed(2212)
 
 class DQNAgent:
     def __init__(self, sess, action_dim, observation_dim):
