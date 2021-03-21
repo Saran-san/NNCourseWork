@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>21e11433-1b20-48c0-ae07-880a12c0f148</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>TrainDqn.py</StartupFile>
+    <StartupFile>testModel.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

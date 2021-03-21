@@ -5,7 +5,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.optimizers import Adam
 
 # setting seeds for result reproducibility. This is not super important
-tf.compat.v1.random.set_random_seed(2212)
+tf.compat.v1.random.set_random_seed(1024)
 
 class DQNAgent:
     def __init__(self, sess, action_dim, observation_dim):
@@ -18,10 +18,12 @@ class DQNAgent:
 
     def create_model(self):
         state_input = Input(shape=(self.observation_dim))
-        state_h1 = Dense(400, activation='relu')(state_input)
-        state_h2 = Dense(300, activation='relu')(state_h1)
-        output = Dense(self.action_dim, activation='linear')(state_h2)
+        state_h1 = Dense(265, activation='relu')(state_input)
+        state_h2 = Dense(64, activation='relu')(state_h1)
+        state_h3 = Dense(128, activation='relu')(state_h2)
+        state_h4 = Dense(64, activation='relu')(state_h3)
+        output = Dense(self.action_dim, activation='linear')(state_h4)
         model = Model(inputs=state_input, outputs=output)
-        model.compile(loss='mse', optimizer=Adam(0.005))
+        model.compile(loss='mse', optimizer=Adam())
         return model
 

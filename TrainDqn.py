@@ -6,15 +6,15 @@ import numpy as np
 import random
 
 # setting seeds for result reproducibility. This is not super important
-random.seed(2212)
-np.random.seed(2212)
-tf.compat.v1.random.set_random_seed(2212)
+random.seed(1024)
+np.random.seed(1024)
+tf.compat.v1.random.set_random_seed(1024)
 
 class TrainDqn:
 
     def __init__(self):
         # Hyperparameters / Constants
-        self.noOfEpisodes = 300
+        self.noOfEpisodes = 400
         self.ReplayMemoryQueueSize = 100000
         self.minReplayMemoryQueueSize = 1000
         self.sampleBatchSize = 32
