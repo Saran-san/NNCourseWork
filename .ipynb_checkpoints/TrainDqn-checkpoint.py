@@ -14,7 +14,7 @@ class TrainDqn:
 
     def __init__(self):
         # Hyperparameters / Constants
-        self.noOfEpisodes = 1000
+        self.noOfEpisodes = 400
         self.ReplayMemoryQueueSize = 100000
         self.minReplayMemoryQueueSize = 10000
         self.sampleBatchSize = 1000
@@ -69,9 +69,6 @@ class TrainDqn:
 
     def StartPlaying(self):
         max_reward = -1000
-        scoresPerEpisode = []
-        maxRewardByEpisode = []
-        epsilonDecayByTime = []
         for episode in range(self.noOfEpisodes):
             currState = self.env.reset()
             done = False
@@ -105,24 +102,22 @@ class TrainDqn:
                     # In other cases reward will be proportional to the distance that car has travelled 
                     # from it's previous location + velocity of the car
                     reward = 3*abs(nextState[0] - currState[0]) + 5*abs(currState[1])
-
+            
                 # Add experience to replay memory buffer
                 self.replay_memory.append((currState, action, reward, nextState, done))
                 currState = nextState
-                
+        
                 if(len(self.replay_memory) < self.minReplayMemoryQueueSize):
                     continue
-
+        
                 self.train_dqn_agent()
 
-            scoresPerEpisode.append(episodeReward)
+
             if(self.epsilon > self.minEpsilon and len(self.replay_memory) > self.minReplayMemoryQueueSize):
                 self.epsilon *= self.epsilonDecay
 
             # some bookkeeping.
             max_reward = max(episodeReward, max_reward)
-            maxRewardByEpisode.append(max_reward)
-            epsilonDecayByTime.append(self.epsilon)
             print('Episode', episode, 'Episodic Reward', episodeReward, 'Maximum Reward', max_reward, 'epsilon', self.epsilon)
 
 obj = TrainDqn()
