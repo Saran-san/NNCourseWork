@@ -11,7 +11,7 @@ import matplotlib.animation
 import numpy as np
 from IPython.display import HTML
 
-model_weight_file = "73.0_agent_.h5"
+model_weight_file = "167.0_agent_.h5"
 
 sess = tf.compat.v1.Session()
 K.set_session(sess)
