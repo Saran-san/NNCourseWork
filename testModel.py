@@ -11,7 +11,7 @@ import matplotlib.animation
 import numpy as np
 from IPython.display import HTML
 
-model_weight_file = "167.0_agent_.h5"
+model_weight_file = "73.0_agent_.h5"
 
 sess = tf.compat.v1.Session()
 K.set_session(sess)
@@ -56,6 +56,6 @@ for frames in episodes:
     animate = lambda i: patch.set_data(frames[i])
     ani = matplotlib.animation.FuncAnimation(plt.gcf(), animate, frames=len(frames), interval = 50)
     HTML(ani.to_jshtml())
-    name = "Animation" + str(i) + ".gif";
+    name = "Animation" + model_weight_file + str(i) + ".gif";
     ani.save(name, dpi=80, writer='imagemagick', fps=60)
     i += 1
